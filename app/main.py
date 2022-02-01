@@ -19,6 +19,7 @@ class Card(BaseModel):
     cvc: str
     password1: str
     password2: str
+    createAt: int
 
 class CardInstance(BaseModel):
     id: str
