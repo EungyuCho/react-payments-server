@@ -93,6 +93,6 @@ def append_card(cardInstance: CardInstance):
 
 @app.delete("/card/{card_id}")
 def append_card(card_id: str):
-    return cardFactory.update(card_id)
+    return cardFactory.remove(card_id)
 
 
