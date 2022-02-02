@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from typing import Literal
 from pydantic import BaseModel
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 import copy
 
@@ -16,9 +17,9 @@ class Card(BaseModel):
     month: str
     owner: str
     type: Literal["포코", "준", "공원", "브랜", "로이드", "도비", "콜린", "썬"]
-    cvc: str
-    password1: str
-    password2: str
+    cvc: Optional[str]
+    password1: Optional[str]
+    password2: Optional[str]
     createAt: int
 
 class CardInstance(BaseModel):
@@ -59,8 +60,14 @@ class CardFactory:
     def remove(self, id: str):
         del self.cards[id]
 
-    def update(self, cardInsance: CardInstance):
-        self.cards[cardInsance.id] = cardInsance.card
+    def updateName(self, cardInsance: CardInstance):
+        card = copy.deepcopy(self.cards.get(cardInsance.id))
+
+        if card == None:
+            return None
+        
+        card.name = cardInsance.card.name
+        self.cards[cardInsance.id] = card
     
 
 app = FastAPI()
@@ -88,11 +95,11 @@ def append_card(cardInstance: CardInstance):
     return cardFactory.append(cardInstance)
 
 @app.put("/card")
-def append_card(cardInstance: CardInstance):
-    return cardFactory.update(cardInstance)
+def update_card(cardInstance: CardInstance):
+    return cardFactory.updateName(cardInstance)
 
 @app.delete("/card/{card_id}")
-def append_card(card_id: str):
+def delete_card(card_id: str):
     return cardFactory.remove(card_id)
 
 
